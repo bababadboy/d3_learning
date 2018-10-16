@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>github contribution</title>
+    <style type="text/css">
+        #chart div {
+          display: inline-block;
+          width: 20px;
+          height: 20px;
+          margin-left: 6px;
+        }
+    </style>
+</head>
+<body>
+
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script> 
+    <script>
+      /*设置画布*/
+      var width = 500
+      var height = 500
+      var svg = d3.select('body')
+      .append('svg')
+      .attr('height',height)
+      .attr('width',width)
+
+      /*在画布上作画*/
+      var rectHeight = 20
+      var rect = svg.append('rect')
+      .attr('width',rectHeight+20)
+      .attr('height',rectHeight+20)
+      .attr('fill','#ebedf0')
+      .transition()
+      .duration('2000')
+      .attr('width',rectHeight)
+      .attr('height',rectHeight)
+      .attr('fill','#196127')
+
+
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>github contribution</title>
+    <style type="text/css">
+        #chart div {
+          display: inline-block;
+          width: 20px;
+          height: 20px;
+          margin-left: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div id="chart"></div>
+    <div id ="text"></div>
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script> 
+    <script>
+        var colorMap = d3.interpolateRgb(
+          // d3.rgb('#d6e685'),
+          // d3.rgb('#1e6823')
+
+            d3.rgb('#ebedf0'),
+            d3.rgb('#c6e48b'),
+            d3.rgb('#7bc96f'),
+            d3.rgb('#7bc96f'), 
+            d3.rgb('#196127')
+        );
+
+        d3.select('#chart')
+          .selectAll("div")
+          .data([0, 0.4, 1, 4, 10, 15])
+          .enter()
+          .append("div")
+          .style("background-color", (d)=> {
+            return d == 0 ? '#eee' : colorMap(d);
+          })
+        d3.select("#text").append("p").text("Less More").style("#525252")
+    </script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>github contribution</title>
+    <style type="text/css">
+        #chart div {
+          display: inline-block;
+          width: 20px;
+          height: 20px;
+          margin-left: 6px;
+        }
+    </style>
+</head>
+<body>
+
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script> 
+    <script>
+      /*设置画布*/
+      var width = 500
+      var height = 500
+      var svg = d3.select('body')
+      .append('svg')
+      .attr('height',height)
+      .attr('width',width)
+
+      /*在画布上作画*/
+
+      var colorMap = d3.interpolateRgb(
+            d3.rgb('#ebedf0'),
+            // d3.rgb('#c6e48b'),
+            // d3.rgb('#7bc96f'),
+            // d3.rgb('#7bc96f'), 
+            d3.rgb('#196127')
+        );
+
+      var dataSet = [100,450,300,210,30]//数据,也就是长度
+      var dataSet2 = d3.range(0,100)
+
+      /*定义线性比例尺，定义域为数值范围，值域为[0,1]*/
+      var linearScale = d3.scale.linear()
+      .domain([0,450])
+      .range([0,1])
+
+      var rectHeight = 20
+      var rect = svg.selectAll('rect')
+      .data(dataSet)
+      .enter()
+      .append('rect')
+      .attr('x',20)
+      .attr('y',function(d,i){
+        return rectHeight*i
+      })
+      // .attr('width',rectHeight)
+      .attr('width',0)
+      .attr('height',rectHeight-2)
+      .attr('fill','#ebedf0')
+      .transition()
+      .delay(function(d,i){
+        return i * 500
+      })
+      .duration(2000)
+      .ease('bounce')
+      .attr('width',function(d,i){//宽度为数组的值，d是值，i是index
+        return d
+      })
+      .attr('fill',function(d){
+        return colorMap(linearScale(d))
+      })
+
+
+    </script>
+</body>
+</html>
