@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>甜甜圈</title>
+    <style type="text/css">
+    </style>
+        <!-- <script src="http://d3js.org/d3.v4.min.js" charset="utf-8"></script>  -->
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script> 
+
+        <!-- <script src="https://d3js.org/d3-path.v1.min.js"></script> -->
+        <!-- <script src="https://d3js.org/d3-shape.v1.min.js"></script> -->
+</head>
+<body>
+
+    <script>
+        var width = 400;
+        var height = 400;
+        var dataset = []
+        for (i = 0;i < 5; i ++){//产生1~100的随机数
+            var number = Math.floor(Math.random() * 100)
+            dataset.push(number)
+        }
+        var svg = d3.select("body")
+                    .append("svg")
+                    .attr("width", width)
+                    .attr("height", height);
+        
+        var pie = d3.layout.pie();
+
+        var piedata = pie(dataset);
+        
+        var outerRadius = 150;	//外半径
+        var innerRadius = 100;	//内半径，为0则中间没有空白
+
+        var arc = d3.svg.arc()	//弧生成器
+                    .innerRadius(innerRadius)	//设置内半径
+                    .outerRadius(outerRadius);	//设置外半径
+        
+        var color = d3.scale.category20();
+
+        console.log(color)
+        var arcs = svg.selectAll("g")
+                    .data(piedata)
+                    .enter()
+                    .append("g")
+                    .attr("transform","translate("+ (width/2) +","+ (width/2) +")");
+                    
+        arcs.append("path")
+            .attr("fill",function(d,i){
+                return color(i);
+            })
+            .attr("d",function(d){
+                return arc(d);
+            });
+        
+        arcs.append("text")
+            .attr("transform",function(d){
+                return "translate(" + arc.centroid(d) + ")";
+            })
+            .attr("text-anchor","middle")
+            .text(function(d){
+                return d.data;
+            });
+        
+        console.log(dataset);
+        console.log(piedata);
+            
+    </script>
+</body>
+</html>

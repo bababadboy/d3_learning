@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Transition</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- <link rel="stylesheet" type="text/css" media="screen" href="main.css" /> -->
+    <style>
+        svg{width:500px;height:300px;}
+        svg rect{fill:#ccc;stroke:gray;stroke-width:2px;}
+    </style>
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script> 
+</head>
+<body>
+    <div>
+        <button id="run" onclick="run();">Run</button>
+    </div>
+    <svg>
+        <rect x="200" y="10" width="50" height="50"></rect>
+        <rect x="300" y="110" width="80" height="50"></rect>
+        <rect x="400" y="200" width="30" height="50"></rect>
+    </svg>
+    <script>
+        // var data=d3.random.normal(50,20)
+        function run(){
+            var data=[]
+            for (i = 0;i < 5; i ++){//产生1~100的随机数
+                var number = Math.floor(Math.random() * 100)
+                data.push(number)
+            }
+            console.log(data)
+            var svg = d3.select("svg")
+            console.log(svg)
+            svg.selectAll("rect")
+            .data(data)
+            .transition()   //1.5seconds
+            .duration(1500)
+            .attr({
+                "x": 0,
+                "y": function(d,i){
+                    return i * 60 + 50;
+                },
+                "width": function(d,i) { return d; },
+                "height": 20,   
+            }) 
+        }
+    </script>
+</body>
+</html>

@@ -22,7 +22,7 @@
       .append('svg')
       .attr('height',height)
       .attr('width',width)
-
+      
       /*在画布上作画*/
 
       var colorMap = d3.interpolateRgb(
@@ -40,12 +40,22 @@
       var linearScale = d3.scale.linear()
       .domain([0,450])
       .range([0,1])
-
       var rectHeight = 20
       var rect = svg.selectAll('rect')
       .data(dataSet)
       .enter()
       .append('rect')
+      /*属性设置*/
+      .attr({		//使用花括号的方式节省重复.attr
+      	'x':20,
+      	'y':function(d,i){
+      		return rectHeight*i//矩形的y值以等差数列的规律下降
+      	},
+      	'width':0,
+      	'height':rectHeight-2,
+      	'fill':'#ebedf0'
+      })
+      /*以下的.attr属性设置方式同上
       .attr('x',20)
       .attr('y',function(d,i){
         return rectHeight*i
@@ -53,10 +63,10 @@
       // .attr('width',rectHeight)
       .attr('width',0)
       .attr('height',rectHeight-2)
-      .attr('fill','#ebedf0')
+      .attr('fill','#ebedf0')*/
       .transition()
       .delay(function(d,i){
-        return i * 500
+        return i * 500    //i * 0.5s
       })
       .duration(2000)
       .ease('bounce')
@@ -66,7 +76,7 @@
       .attr('fill',function(d){
         return colorMap(linearScale(d))
       })
-
+      console.log(rect)
 
     </script>
 </body>
