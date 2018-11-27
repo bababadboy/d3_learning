@@ -8,12 +8,39 @@
   <script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
   <script src="lib/radarChart/radarChart.js"></script>
     <style>
-      rect.bordered {
+    /** 自定义title **/
+    [data-title]:hover:after {
+        opacity: 1;
+        transition: all 0.1s ease 0.5s;
+        visibility: visible;
+    }
+    [data-title]:after {
+        content: attr(data-title);
+        background-color: #00FF00;
+        color: #111;
+        font-size: 150%;
+        position: absolute;
+        padding: 1px 5px 2px 5px;
+        bottom: -1.6em;
+        left: 100%;
+        white-space: nowrap;
+        box-shadow: 1px 1px 3px #222222;
+        opacity: 0;
+        border: 1px solid #111111;
+        z-index: 99999;
+        visibility: hidden;
+    }
+    [data-title] {
+        position: relative;
+    }
+
+
+        rect.bordered {
         /* stroke: rgb(161, 161, 161); */
         stroke: #000;
         stroke-width:1px;  
-      }
-      text.mono {
+        }
+        text.mono {
         font-size: 9pt;
         font-family: Consolas, courier;
         fill: #000;
@@ -27,7 +54,9 @@
         fill: #225ea8; /*39 , ...59*/
         fill: #253494; /*60 , ...79*/
         fill: #081d58; /*80 , ...99*/
-      }
+        }
+    
+    
     </style>
   </head>
   
@@ -46,7 +75,8 @@
     <div  class="container-fluid/">
         <div class="row">
             <div id="heatMap" class="col-xs-12 col-lg-6"></div>
-            <div class="col-xs-12 col-lg-6">         
+            <div class="col-xs-12 col-lg-6">   
+                <!-- <a href="#" data-title="woooooo!">woooooooooooooo!</a>       -->
                 <div id="playerName" class="row" ></div>
                 <div class="radarChart" ></div>
                 <div id="radarChart_note" class="row" ></div>                
@@ -56,7 +86,7 @@
     <script type="text/javascript">
     var array_data = [];
     // 一句话定义了众多变量， 定义了块儿的位置、宽高、小格子的边长等等与布局有关的变量
-    var margin = { top: 50, right: 0, bottom: 100, left: 150 },
+    var margin = { top: 50, right: 0, bottom: 100, left: 160 },
         width = 950 - margin.left - margin.right,        // 所有格子区域的宽度，即Heatmap的宽度
         height = 850 - margin.top - margin.bottom,
         gridSize = Math.floor(width / 32),    // 求地板，即去掉小数部分，调整方格大小
@@ -85,38 +115,38 @@
                     .attr("height", height + margin.top + margin.bottom)
                     .style("text-anchor", "float:left")
                     .append("g")    // 在svg内加入一个g（group组），并设置元素g的显示位置
-                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")"); // 调动g元素位置，默认会在最左边
                 
-              // 编辑姓名行
-              var nameLabels = svg.selectAll(".nameLabel")
-                  .data(data)
-                  .enter()    // 为data中每一项创建一个".dayLabel"
-                  .append("text")    // 为days中每一项创建一的".dayLabel"添加文本，下面全是设置文本的属性
-                    .text(function (d, i) { return data[i].PLAYER; })
-                    .attr("x", 0)
-                    .attr("y", function (d, i) { return i * gridSize; })
-                    .style("text-anchor", "end")  // 锚点的设置，start/middel/end
-                    .attr("transform", "translate(-6," + gridSize / 1.5 + ")")
-                    .attr("class", function (d, i) 
-                            { return ("nameLabel mono axis"); }
-                        );
+                // 编辑姓名行
+                var nameLabels = svg.selectAll(".nameLabel")
+                    .data(data)
+                    .enter()    // 为data中每一项创建一个".dayLabel"
+                    .append("text")    // 为days中每一项创建一的".dayLabel"添加文本，下面全是设置文本的属性
+                        .text(function (d, i) { return data[i].PLAYER; })
+                        .attr("x", 0)
+                        .attr("y", function (d, i) { return i * gridSize; })
+                        .style("text-anchor", "end")  // 锚点的设置，start/middel/end
+                        .attr("transform", "translate(-6," + gridSize / 1.5 + ")")
+                        .attr("class", function (d, i) 
+                                { return ("nameLabel mono axis"); }
+                            );
                     
-              console.log('nameLabels:',nameLabels);
+                console.log('nameLabels:',nameLabels);
 
-              // 编辑指标项行
-              var indexLabels = svg.selectAll(".indexLabel")
-                  .data(indexs)
-                  .enter().append("text")
-                    .text(function(d) { return d; })
-                    .attr("x", function(d, i) { return i * gridSize; })
-                    .attr("y", 0)
-                    .style("text-anchor", "middle")
-                    .attr("transform", "translate(" + gridSize / 2 + ", -6)")
-                    .attr("class", function(d, i) { 
-                            return ( "indexLabel mono axis"); }
-                         );
+                // 编辑指标项行
+                var indexLabels = svg.selectAll(".indexLabel")
+                    .data(indexs)
+                    .enter().append("text")
+                        .text(function(d) { return d; })
+                        .attr("x", function(d, i) { return i * gridSize; })
+                        .attr("y", 0)
+                        .style("text-anchor", "middle")
+                        .attr("transform", "translate(" + gridSize / 2 + ", -6)")
+                        .attr("class", function(d, i) { 
+                                return ( "indexLabel mono axis"); }
+                            );
   
-                // 画出格子，暂不涂色，color[0]
+                // 把30*20的数据填入array_data
                 for (var i = 0; i < 30; i++){
                     array_data[i*20] = data[i].GP;
                     array_data[i*20+1] = data[i].MIN;
@@ -142,26 +172,29 @@
             console.log('array_data',array_data);
               
             draw_radarChart(0);//初始化输出第0个球员的雷达图
-
+            
+            // 画出格子，暂不涂色，color[0]
             var heatMap = svg.selectAll(".score")
-                  .data(array_data)
-                  .enter()        // 为data中每一项创建一个".score"
-                  .append("rect")
-                  .attr("x", function(d, i){ return (i % 20)*gridSize;})
-                  .attr("y", function(d, i){ return parseInt(i / 20)*gridSize;})
-                  .attr("rx", 7)    // x轴圆角的半径
-                  .attr("ry", 7)
-                  .attr("class", "heatMap bordered")
-                  .attr("width", gridSize)
-                  .attr("height", gridSize)
-                  .style("fill", "#fbeed7");// 数据未加载时的方格的颜色为此颜色
-                
+                .data(array_data)
+                .enter()        // 为data中每一项创建一个".score"
+                .append("rect")
+                .attr("x", function(d, i){ return (i % 20)*gridSize;})
+                .attr("y", function(d, i){ return parseInt(i / 20)*gridSize;})
+                .attr("rx", 7)    // x轴圆角的半径
+                .attr("ry", 7)    // y轴圆角的半径
+                .attr("class", "heatMap bordered")
+                .attr("width", gridSize)
+                .attr("height", gridSize)
+                .style("fill", "#fbeed7");// 数据未加载时的方格的颜色为此颜色   
+
             // duration(1000) 在1000ns也就是1s内将格子图上色
             heatMap.transition().duration(3000)
                 .style("fill", function(d) { return colorScale(d); });
                 
             // 鼠标停留显示value
             heatMap.append("title").text(function(d) { return d; });
+            // heatMap.append("data-title").text(function(d) { return d; }); // 自定义attr无效...
+
 
             // 鼠标在某个rect上面，其颜色变化以示被指着了
             heatMap.on("mouseover",function (d,i) { 
@@ -178,12 +211,13 @@
                 d3.select(this)
                     .style("opacity", 1);
             });
-
+            
+            // 确定雷达图的球员
             heatMap.on("click",function (d,i) { 
-                draw_radarChart(parseInt(i/20));//i除以20向下取整，确定行数（球员id）
+                draw_radarChart(parseInt(i/20));// i除以20向下取整，确定行数（球员id）
             }); 
 
-              /* legend 图例*/
+            /* legend 图例*/
             var legend = svg.selectAll(".legend")
                 .data([0].concat(colorScale.quantiles()), function(d) { return d; })   
                 .enter().append("g")
@@ -206,29 +240,31 @@
 
 <!--***************************RadarChart*******************************************-->
 <script>    
-function draw_radarChart(k)// 根据第k个player的数据画雷达图，修改的Nadieh Bremer的demo
+function draw_radarChart(k)// 根据第k个player的数据画雷达图，修改Nadieh Bremer的demo
 {  
-      /* Radar chart design created by Nadieh Bremer - VisualCinnamon.com */
+        /* Radar chart design created by Nadieh Bremer - VisualCinnamon.com */
 			////////////////////////////////////////////////////////////// 
 			//////////////////////// Set-Up ////////////////////////////// 
 			////////////////////////////////////////////////////////////// 
 
 			var radar_margin = {top:0, right: 100, bottom: 0, left: 100},
-				radar_width = Math.min(500, window.innerWidth - 10) - margin.left - margin.right,
-				radar_height = Math.min(width, window.innerHeight - margin.top - margin.bottom - 20);
+			    radar_width = Math.min(500, window.innerWidth - 10) - margin.left - margin.right,
+				radar_height = Math.min(width, window.innerHeight - margin.top - margin.bottom - 125);
 			
             
 			////////////////////////////////////////////////////////////// 
 			////////////////////////// Data ////////////////////////////// 
 			////////////////////////////////////////////////////////////// 
-			d3.csv("player_normalizated.csv",function(error,csvdata){  
-   			 if(error){ console.log(error); } 
+			d3.csv("player_normalizated.csv",function(error,csvdata){  //使用标准化的数据
+   			    if(error){
+                       console.log(error);
+            } 
             
             var csv_data =[];
-            var axisLable =["PTS","FGP","P3PP","FTP","REB","AST","STL","BLK","TOV","EFF"];   
+            var axisLable =["PTS","FGP","P3PP","FTP","REB","AST","STL","BLK","TOV","EFF"];   //雷达图的指标
     		console.log(csvdata);
-            console.log(k);
-            for(i=0;i<2;i++)
+            console.log("这是第"+k+"个球员");
+            for(i=0;i<3;i++)    // 共有三层，一层是平均值，一层是球员值，一层是最佳值
             {
                 csv_data[i] = [
 						{axis:"PTS",value:0},
@@ -243,11 +279,14 @@ function draw_radarChart(k)// 根据第k个player的数据画雷达图，修改�
 						{axis:"EFF",value:0}			
 					  ];	
             }
-						for (j=0;j<10;j++)
-					{
-						csv_data[0][j].value = csvdata[30][axisLable[j]];//Average
-                        csv_data[1][j].value = csvdata[k][axisLable[j]];
-					}    
+
+            for (j=0;j<10;j++)
+            {
+                csv_data[0][j].value = csvdata[30][axisLable[j]];// Average
+                csv_data[1][j].value = csvdata[k][axisLable[j]];
+                csv_data[2][j].value = csvdata[0][axisLable[j]]; // Best
+            }    
+
 			//console.log(csv_data); 
 			////////////////////////////////////////////////////////////// 
 			//////////////////// Draw the Chart ////////////////////////// 
@@ -267,10 +306,10 @@ function draw_radarChart(k)// 根据第k个player的数据画雷达图，修改�
 
             for(i=0;i<30;i++)
             {
-                    d3.select("#playerName"+i).remove();
-            }//清除之前的svg，实现更新
+                d3.select("#playerName"+i).remove();
+            }// 清除之前的svg，实现更新
 
-
+            // 雷达图球员名称
             var playerName = d3.select("#playerName")
                   .append("svg") // 选择“chart”（就是div），加入一个svg，设置属性跟div一样大
                   .attr("id", "playerName"+k)
@@ -278,7 +317,7 @@ function draw_radarChart(k)// 根据第k个player的数据画雷达图，修改�
                   .attr("height",100)
                   .style("text-anchor", "float:left")
                   .append("g")    // 在svg内加入一个g（group组），并设置元素g的显示位置
-                  .attr("transform", "translate( 180 ," + margin.top + ")");
+                  .attr("transform", "translate( 180 ," + 100 + ")");
                   
             var playerName =  playerName
                   .append("g")
@@ -298,44 +337,65 @@ function draw_radarChart(k)// 根据第k个player的数据画雷达图，修改�
 <!--***************************legend of radarChart*******************************************-->
 <script>
             var radarChart_note = d3.select("#radarChart_note")
-                  .append("svg") 
-                  .attr("width", 500)
-                  .attr("height",100)
-                  .attr("class","radarChart_note")
-                  
+                .append("svg") 
+                .attr("width", 500)
+                .attr("height",100)
+                .attr("class","radarChart_note")
+            
+            // player legend
             radarChart_note.append("g")
-                  .attr("class","radar_legend")
-                  .append("rect")
-                  .attr("x", 0)
-                  .attr("y", 0)
-                  .attr("width", 10)
-                  .attr("height",10)
-                  .style("fill", "#CC333F")
-                  .attr("transform", "translate( 180 ," + margin.top + ")");
-                  
+                .attr("class","radar_legend")
+                .append("rect")
+                .attr("x", 0)
+                .attr("y", 0)
+                .attr("width", 10)
+                .attr("height",10)
+                .style("fill", "#CC333F")
+                .attr("transform", "translate( 180 ," + margin.top + ")");
+                
             radarChart_note.append("g")
-                  .append("text")    
-                  .text("Player")
-                  .attr("font-size",20)
-                  .style("fill","#CC333F")
-                  .attr("transform", "translate( 200 ,63)");
+                .append("text")    
+                .text("Player")
+                .attr("font-size",20)
+                .style("fill","#CC333F")
+                .attr("transform", "translate( 200 ,63)");
+
+            // average legend
+            radarChart_note.append("g")
+                .attr("class","radar_legend")
+                .append("rect")
+                .attr("x", 0)
+                .attr("y", 0)
+                .attr("width", 10)
+                .attr("height",10)
+                .style("fill", "#EDC951")
+                .attr("transform", "translate( 280 ," + margin.top + ")");
 
             radarChart_note.append("g")
-                  .attr("class","radar_legend")
-                  .append("rect")
-                  .attr("x", 0)
-                  .attr("y", 0)
-                  .attr("width", 10)
-                  .attr("height",10)
-                  .style("fill", "#EDC951")
-                  .attr("transform", "translate( 300 ," + margin.top + ")");
+                .append("text")    
+                .text("Average")
+                .attr("font-size",20)
+                .style("fill","#EDC951")
+                .attr("transform", "translate( 300 ,63)");
 
-             radarChart_note.append("g")
-                  .append("text")    
-                  .text("Average")
-                  .attr("font-size",20)
-                  .style("fill","#EDC951")
-                  .attr("transform", "translate( 320 ,63)");
+
+            // best legend
+            radarChart_note.append("g")
+                .attr("class","radar_legend")
+                .append("rect")
+                .attr("x", 0)
+                .attr("y", 0)
+                .attr("width", 10)
+                .attr("height",10)
+                .style("fill", "#00A0B0")
+                .attr("transform", "translate( 380 ," + margin.top + ")");
+
+            radarChart_note.append("g")
+                .append("text")    
+                .text("Best")
+                .attr("font-size",20)
+                .style("fill","#00A0B0")
+                .attr("transform", "translate( 400 ,63)");
 </script>
-  </body>
+</body>
 </html>
